@@ -24,13 +24,21 @@ Mod preview images come from the mod folder. For mods that ship none, drop a PNG
 - Penumbra and Glamourer installed and working
 - A Windows PC
 
-## Install (testing)
+## Install
 
-1. Download `Wardrobe.zip` from the [latest release](../../releases/latest) and unzip it somewhere permanent.
-2. In game, type `/xlsettings`, open the **Experimental** tab, and find **Dev Plugin Locations**.
-3. Add the full path to `Wardrobe.dll` from the unzipped folder, click **+**, then **Save changes and close**.
-4. Type `/xlplugins`, go to **Dev Tools**, then **Installed Dev Plugins**, and enable **Wardrobe**.
-5. Type `/wardrobe` to open the window.
+**From the plugin list (recommended):**
+
+1. In game, type `/xlsettings` and open the **Experimental** tab.
+2. Under **Custom Plugin Repositories**, paste this address, click **+**, then **Save changes and close**:
+
+   `https://raw.githubusercontent.com/Tacodille/Wardrobe/main/repo.json`
+
+3. Type `/xlplugins`, search for **Wardrobe** under **All Plugins**, and install it.
+4. Type `/wardrobe` to open the window.
+
+Updates show up in the plugin list like any other plugin. Custom repositories are not reviewed by the Dalamud team, so Dalamud shows its usual third-party warning.
+
+**Or as a dev plugin:** download `latest.zip` from the [latest release](../../releases/latest), unzip it somewhere permanent, add the full path to `Wardrobe.dll` under **Dev Plugin Locations** in the same Experimental tab, then enable it under `/xlplugins`, **Dev Tools**, **Installed Dev Plugins**.
 
 ## How it behaves
 
@@ -54,7 +62,7 @@ You need the .NET 10 SDK and a Dalamud dev install (the one XIVLauncher creates)
 dotnet build -c Release
 ```
 
-The output is `bin/Release/Wardrobe.dll`.
+The output is `bin/Release/Wardrobe.dll`. `python tools/release.py` builds it, packages `latest.zip` and refreshes `repo.json`; add `--publish` to push and attach it to a GitHub release.
 
 ## A note on the game's rules
 

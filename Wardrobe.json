@@ -3,7 +3,7 @@
   "Name": "Wardrobe",
   "InternalName": "Wardrobe",
   "Punchline": "One window for Penumbra mods and Glamourer looks.",
-  "Description": "Shows what you are wearing, which Penumbra mods apply to each slot, and (later) previews and applies them through Glamourer.",
+  "Description": "Shows what you are wearing and which Penumbra mods fit each slot. Hover to preview on your own character, click to pin, then apply through Penumbra and Glamourer. Also edits mod colours and emission, shows which mod wins each file, and lists your Glamourer designs.",
   "Tags": [
     "glamourer",
     "penumbra"
