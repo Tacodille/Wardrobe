@@ -1,0 +1,19 @@
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+  <PropertyGroup>
+    <Version>0.0.1</Version>
+    <Description>A wardrobe window that sits on top of Penumbra and Glamourer.</Description>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <Compile Include="Core\**\*.cs" />
+    <Compile Include="Ui\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Penumbra.Api" Version="5.19.2" />
+    <PackageReference Include="Glamourer.Api" Version="2.8.2" />
+  </ItemGroup>
+</Project>

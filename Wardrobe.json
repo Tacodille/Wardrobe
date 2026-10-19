@@ -1,0 +1,13 @@
+{
+  "Author": "Tacodile",
+  "Name": "Wardrobe",
+  "InternalName": "Wardrobe",
+  "Punchline": "One window for Penumbra mods and Glamourer looks.",
+  "Description": "Shows what you are wearing, which Penumbra mods apply to each slot, and (later) previews and applies them through Glamourer.",
+  "Tags": [
+    "glamourer",
+    "penumbra"
+  ],
+  "ApplicableVersion": "any",
+  "RepoUrl": "https://github.com/Tacodille/Wardrobe"
+}
