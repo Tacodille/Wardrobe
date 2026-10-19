@@ -8,12 +8,13 @@ Pick a slot, see every mod that fits it, hover to preview on your own character,
 
 ## What it does
 
-- **Wardrobe tab.** Slots on the left, with what you are wearing. The middle list shows every mod that touches the slot (head to rings, weapons, hair, face, eyes, tail, skin and tattoos), plus vanilla items. Hover to preview, click to pin, click again to take it back off.
+- **Wardrobe tab.** Slots on the left, with what you are wearing. The middle list shows every mod that touches the slot (head to rings, weapons, glasses and other facewear, hair, face, eyes, tail, skin and tattoos, and effects and animations), plus vanilla items. Hover to preview, click to pin, click again to take it back off.
 - **Options.** Each mod's option groups are shown and can be changed before you apply. Mods with one option per variant (tail shapes, for example) preview each variant separately.
 - **Priority.** Previews run at a high temporary priority so they show over other mods. The panel shows which mods beat a mod on its files, and **Make this win** raises its priority just enough.
 - **Apply and undo.** Apply turns the mod on in your collection and equips the item. It can also switch off other mods that replace the same model or material files, with a tick box per mod and an always-keep-on list. **Undo last apply** reverses it.
 - **Designs tab.** Your Glamourer designs. Hover to preview, apply, or save the current look as a new design.
 - **Materials tab.** Edit shader colours and emission for the materials your mods actually use (skin glow, iris colour, and so on), with a live preview. Saving writes a copy into a separate mod called `Wardrobe Overrides`. It never edits the original mod.
+- **Import tab.** Lists mod packs (`.pmp`, `.ttmp2`) in your mod folder and Downloads that Penumbra has not imported yet, and imports them through Penumbra with one click.
 - **Diagnostics tab.** What Glamourer says you are wearing, which mod Penumbra serves each model from, and every file that more than one enabled mod wants.
 
 Mod preview images come from the mod folder. For mods that ship none, drop a PNG named after the mod's folder into `%USERPROFILE%\Wardrobe\previews`.
@@ -49,7 +50,7 @@ Updates show up in the plugin list like any other plugin. Custom repositories ar
 
 ## Known limits
 
-- Glasses and other bonus items are not supported yet.
+- Animations and effects (walk and run animations, auras, footstep effects) are listed under **Effects & animations**, but hovering can only switch the mod on temporarily. You see the result when you move or the effect fires.
 - The character select screen cannot be changed. Neither Penumbra nor Glamourer can touch it.
 - Hair, face and tail previews set the style number from the model path. If your race cannot use that style, the top bar says so and only the mod's files change.
 - Saved material overrides are written in Penumbra's current mod format. If Penumbra does not load the new mod, the file is still in your mod folder.

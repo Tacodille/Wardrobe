@@ -42,6 +42,9 @@ public sealed class Ipc : IDisposable
     private readonly PenApi.RemoveTemporaryMod penRemoveTemp;
     private readonly PenApi.AddMod penAddMod;
     private readonly PenApi.ReloadMod penReloadMod;
+    private readonly PenApi.InstallMod penInstallMod;
+    private readonly IDisposable penModAdded;
+    private readonly GlamApi.SetBonusItem glamSetBonus;
     private readonly GlamApi.ApiVersion glamVersion;
     private readonly GlamApi.GetState glamState;
     private readonly GlamApi.GetStateBase64 glamStateB64;
@@ -76,6 +79,8 @@ public sealed class Ipc : IDisposable
         penRemoveTemp = new PenApi.RemoveTemporaryMod(pi);
         penAddMod = new PenApi.AddMod(pi);
         penReloadMod = new PenApi.ReloadMod(pi);
+        penInstallMod = new PenApi.InstallMod(pi);
+        glamSetBonus = new GlamApi.SetBonusItem(pi);
         glamVersion = new GlamApi.ApiVersion(pi);
         glamState = new GlamApi.GetState(pi);
         glamStateB64 = new GlamApi.GetStateBase64(pi);
@@ -93,6 +98,7 @@ public sealed class Ipc : IDisposable
                 Dirty = true;
         });
         penInitialised = PenApi.Initialized.Subscriber(pi, () => Dirty = true);
+        penModAdded = PenApi.ModAdded.Subscriber(pi, _ => Dirty = true);
         glamInitialised = GlamApi.Initialized.Subscriber(pi, () => Dirty = true);
     }
 
@@ -210,6 +216,10 @@ public sealed class Ipc : IDisposable
         return reload || Ok(() => penAddMod.Invoke(dir));
     }
 
+    /// <summary>Asks Penumbra to import a mod pack (.pmp, .ttmp2). Success only means it was queued.</summary>
+    public bool InstallMod(string packagePath)
+        => Ok(() => penInstallMod.Invoke(packagePath));
+
     private static bool Ok(Func<PenumbraApiEc> call, bool nothingChangedIsOk = false, [System.Runtime.CompilerServices.CallerMemberName] string caller = "")
     {
         try
@@ -275,6 +285,23 @@ public sealed class Ipc : IDisposable
     /// <summary>Equips an item. With <paramref name="once"/> the change is a preview that automation may replace later.</summary>
     public bool SetItem(Area area, ulong itemId, byte stain, byte stain2, bool once)
     {
+        if (area == Area.Glasses)
+        {
+            try
+            {
+                var bonusFlags = ApplyFlag.Equipment | (once ? ApplyFlag.Once : 0);
+                var bec = glamSetBonus.Invoke(PlayerIndex, ApiBonusSlot.Glasses, itemId, 0, bonusFlags);
+                if (bec != GlamourerApiEc.Success)
+                    Plugin.Log.Warning("Glamourer SetBonusItem(Glasses, {Item}) returned {Code}", itemId, bec);
+                return bec == GlamourerApiEc.Success;
+            }
+            catch (Exception e)
+            {
+                Plugin.Log.Warning(e, "Glamourer SetBonusItem failed.");
+                return false;
+            }
+        }
+
         var slot = ToApiSlot(area);
         if (slot == null)
             return false;
@@ -355,6 +382,7 @@ public sealed class Ipc : IDisposable
     {
         penSettingChanged.Dispose();
         penInitialised.Dispose();
+        penModAdded.Dispose();
         glamInitialised.Dispose();
     }
 }

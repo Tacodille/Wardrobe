@@ -25,6 +25,8 @@ public sealed class Items
     private readonly Dictionary<(Area, int), List<ItemInfo>> bySet = new();
     private readonly Dictionary<Area, List<ItemInfo>> byArea = new();
     private readonly Dictionary<uint, ItemInfo> byId = new();
+    private readonly Dictionary<uint, ItemInfo> glassesById = new();
+    private readonly Dictionary<int, List<ItemInfo>> glassesBySet = new();
 
     public Items(IDataManager data)
     {
@@ -82,15 +84,49 @@ public sealed class Items
         {
             Plugin.Log.Error(e, "Could not build the item index.");
         }
+
+        try
+        {
+            // Facewear (glasses, monocles, auras) is its own sheet. Its model id is the equipment set the mod files use.
+            foreach (var g in data.GetExcelSheet<Glasses>())
+            {
+                var name = g.Singular.ToString();
+                if (g.RowId == 0 || string.IsNullOrWhiteSpace(name))
+                    continue;
+                var info = new ItemInfo
+                {
+                    Id = g.RowId,
+                    Name = name,
+                    Area = Area.Glasses,
+                    SetId = (int)(g.Model & 0xFFFF),
+                    Variant = (int)((g.Model >> 16) & 0xFF),
+                };
+                glassesById[info.Id] = info;
+                if (!glassesBySet.TryGetValue(info.SetId, out var list))
+                    glassesBySet[info.SetId] = list = new List<ItemInfo>();
+                list.Add(info);
+                if (!byArea.TryGetValue(Area.Glasses, out var all))
+                    byArea[Area.Glasses] = all = new List<ItemInfo>();
+                all.Add(info);
+            }
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.Error(e, "Could not build the facewear index.");
+        }
     }
 
-    public int Count => byId.Count;
+    public int Count => byId.Count + glassesById.Count;
+
+    public ItemInfo? GlassesById(ulong id) => id <= uint.MaxValue && glassesById.TryGetValue((uint)id, out var i) ? i : null;
+
+    public IReadOnlyList<ItemInfo> GlassesForSet(int setId) => glassesBySet.TryGetValue(setId, out var l) ? l : [];
 
     public ItemInfo? ById(ulong id) => id <= uint.MaxValue && byId.TryGetValue((uint)id, out var i) ? i : null;
 
     /// <summary>Items that use a given model set in a slot. A ring item fits both finger slots.</summary>
     public IReadOnlyList<ItemInfo> ForSet(Area area, int setId)
-        => bySet.TryGetValue((area, setId), out var l) ? l : [];
+        => area == Area.Glasses ? GlassesForSet(setId) : bySet.TryGetValue((area, setId), out var l) ? l : [];
 
     public IEnumerable<ItemInfo> ForArea(Area area, string filter)
     {

@@ -65,8 +65,6 @@ public sealed class WardrobeTab
             ImGui.TextDisabled(Truncate(Equipped(a), 18));
         }
 
-        ImGui.Spacing();
-        ImGui.TextDisabled("Glasses: use Glamourer for now.");
     }
 
     private string Equipped(Area a)
@@ -76,6 +74,12 @@ public sealed class WardrobeTab
             return string.Empty;
         try
         {
+            if (a == Area.Glasses)
+            {
+                var bonus = (ulong?)state["Bonus"]?["Glasses"]?["BonusId"] ?? 0;
+                return bonus == 0 ? "(none)" : app.Items.GlassesById(bonus)?.Name ?? $"id {bonus}";
+            }
+
             if (a <= Area.OffHand && state["Equipment"]?[a.ToString()]?["ItemId"] is { } id)
             {
                 var item = app.Items.ById((ulong)id);
@@ -153,7 +157,7 @@ public sealed class WardrobeTab
             }
         }
 
-        if (area <= Area.OffHand)
+        if (area <= Area.Glasses)
         {
             ImGui.Spacing();
             if (ImGui.CollapsingHeader("Vanilla items"))
@@ -241,7 +245,7 @@ public sealed class WardrobeTab
                     app.Preview.Pin(request);
             }
         }
-        else if (entry.Items.Count == 0 && area <= Area.OffHand)
+        else if (entry.Items.Count == 0 && area <= Area.Glasses)
         {
             ImGui.TextColored(Colours.Warn, "No vanilla item uses this model set, so Glamourer can't equip it by itself.");
         }

@@ -71,7 +71,7 @@ public sealed class SlotEntry
 
     public string Title => NeedsDetail ? $"{BaseTitle}   [{Detail}]" : BaseTitle;
 
-    private string BaseTitle => Items.Count > 0 ? $"{Mod.Name}  ->  {Items[0].Name}" : Area is Area.Skin or Area.Eyes or Area.Hair or Area.Face or Area.Tail or Area.VieraEars ? Mod.Name : $"{Mod.Name}  (set {SetId})";
+    private string BaseTitle => Items.Count > 0 ? $"{Mod.Name}  ->  {Items[0].Name}" : Area is Area.Skin or Area.Eyes or Area.Vfx or Area.Hair or Area.Face or Area.Tail or Area.VieraEars ? Mod.Name : $"{Mod.Name}  (set {SetId})";
 }
 
 /// <summary>Everything Wardrobe knows about your mods right now: folders, states, who wins which file, and per-slot entries.</summary>
@@ -173,6 +173,8 @@ public sealed class Catalog
 
             var found = new Dictionary<(Area, int), SlotEntry>();
             var skinAnyRace = 0;
+            var effectFiles = 0;
+            var effectPaths = new List<string>();
 
             void Add(string? group, string? option, ContainerDef c, string label)
             {
@@ -180,8 +182,15 @@ public sealed class Catalog
                 foreach (var path in c.Files.Keys.Concat(c.Swaps.Keys))
                 {
                     var info = PathInfo.Classify(path);
-                    if (info.Area is Area.Other or Area.Animation or Area.Common or Area.Vfx)
+                    if (info.Area is Area.Other or Area.Common)
                         continue;
+                    if (info.Area is Area.Animation or Area.Vfx)
+                    {
+                        // Effects and animations are one bucket per mod, and only count when the mod is really about them.
+                        effectFiles++;
+                        effectPaths.Add(path);
+                        continue;
+                    }
                     if (info.Area == Area.Skin)
                         skinAnyRace++;
                     if (info.IsAppearance && info.RaceCode != 0 && !RaceMatches(info))
@@ -238,6 +247,33 @@ public sealed class Catalog
                     Add(g.Name, null, g.Containers[i], $"{g.Name}:combo{i}");
             }
 
+            // Facewear shares the head slot's file names. A head-slot set no vanilla head item uses, but a glasses item does, is facewear.
+            foreach (var key in found.Keys.Where(k => k.Item1 == Area.Head).ToList())
+            {
+                if (items.ForSet(Area.Head, key.Item2).Count == 0 && items.GlassesForSet(key.Item2).Count > 0)
+                {
+                    var entry = found[key];
+                    found.Remove(key);
+                    entry.Area = Area.Glasses;
+                    found[(Area.Glasses, key.Item2)] = entry;
+                }
+            }
+
+            // Effects and animations: one entry per mod, when the mod has several such files or nothing else to show.
+            if (effectFiles >= 3 || (effectFiles > 0 && found.Count == 0))
+            {
+                var fx = Get(Area.Vfx, 0);
+                fx.FileCount += effectFiles;
+                foreach (var p in effectPaths)
+                    fx.Paths.Add(p);
+                foreach (var g in mod.Def.Groups)
+                    foreach (var o in g.Options)
+                        if (o.Container.Files.Keys.Concat(o.Container.Swaps.Keys).Any(effectPaths.Contains))
+                            Note(fx, g.Name, o.Name, active.Contains($"{g.Name}:{o.Name}"));
+                if (mod.Def.Default.Files.Keys.Concat(mod.Def.Default.Swaps.Keys).Any(effectPaths.Contains))
+                    Note(fx, null, null, active.Contains("default"));
+            }
+
             // A body mod (The Body SE and friends) ships far more skin files than clothing, plus bare-body gear models for the
             // equipment slots. Those gear models belong with the skin, so the slot lists are not full of it.
             var gearFiles = found.Where(kv => kv.Key.Item1 <= Area.LFinger).Sum(kv => kv.Value.FileCount);
@@ -271,7 +307,7 @@ public sealed class Catalog
 
             foreach (var e in found.Values)
             {
-                if (e.Area is >= Area.Head and <= Area.OffHand)
+                if (e.Area is >= Area.Head and <= Area.Glasses)
                     foreach (var item in items.ForSet(e.Area, e.SetId))
                         e.Items.Add(item);
                 result.Add(e);

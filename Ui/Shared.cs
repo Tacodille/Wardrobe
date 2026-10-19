@@ -28,11 +28,13 @@ internal static class Shared
         (Area.LFinger, "Ring (left)"),
         (Area.MainHand, "Main hand"),
         (Area.OffHand, "Off hand"),
+        (Area.Glasses, "Glasses / facewear"),
         (Area.Hair, "Hair"),
         (Area.Face, "Face"),
         (Area.Eyes, "Eyes"),
         (Area.Tail, "Tail / ears"),
         (Area.Skin, "Skin & tattoos"),
+        (Area.Vfx, "Effects & animations"),
     ];
 
     public static string Label(Area area)

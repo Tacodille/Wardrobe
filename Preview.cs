@@ -445,6 +445,8 @@ public sealed class PreviewController
     private Original OriginalOf(Area area)
     {
         var json = snapshot ?? ipc.PlayerState();
+        if (area == Area.Glasses)
+            return new Original((ulong?)json?["Bonus"]?["Glasses"]?["BonusId"] ?? 0, 0, 0);
         if (json?["Equipment"]?[area.ToString()] is JObject e)
             return new Original((ulong?)e["ItemId"] ?? 0, (byte)((int?)e["Stain"] ?? 0), (byte)((int?)e["Stain2"] ?? 0));
         return new Original(0, 0, 0);

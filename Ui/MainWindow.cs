@@ -12,6 +12,7 @@ public sealed class MainWindow : Window
     private readonly DiagnosticsTab diagnostics;
     private readonly MaterialsTab materials;
     private readonly StatusTab status;
+    private readonly ImportTab import;
 
     public MainWindow(App app) : base("Wardrobe###WardrobeMain")
     {
@@ -21,6 +22,7 @@ public sealed class MainWindow : Window
         diagnostics = new DiagnosticsTab(app);
         materials = new MaterialsTab(app);
         status = new StatusTab(app);
+        import = new ImportTab(app);
 
         Size = new Vector2(1000, 640);
         SizeCondition = ImGuiCond.FirstUseEver;
@@ -62,6 +64,12 @@ public sealed class MainWindow : Window
             if (ImGui.BeginTabItem("Materials"))
             {
                 materials.Draw();
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Import"))
+            {
+                import.Draw();
                 ImGui.EndTabItem();
             }
 

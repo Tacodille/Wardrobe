@@ -89,12 +89,14 @@ public readonly record struct PathInfo(Area Area, int SetId, int Variant, int Ra
 
         if (p.StartsWith("chara/human/") && p.Contains("/animation/"))
             return new PathInfo(Area.Animation, 0, 0, 0, false);
+        if (p.StartsWith("chara/action/"))
+            return new PathInfo(Area.Animation, 0, 0, 0, false);
+        if (p.StartsWith("vfx/") || p.Contains("/vfx/"))
+            return new PathInfo(Area.Vfx, 0, 0, 0, false);
         if (p.StartsWith("chara/common/texture/eye/"))
             return new PathInfo(Area.Eyes, 0, 0, 0, false);
         if (p.StartsWith("chara/common/"))
             return new PathInfo(Area.Common, 0, 0, 0, false);
-        if (p.StartsWith("vfx/"))
-            return new PathInfo(Area.Vfx, 0, 0, 0, false);
         return new PathInfo(Area.Other, 0, 0, 0, false);
     }
 
