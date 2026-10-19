@@ -3,7 +3,7 @@
     "Author": "Tacodile",
     "Name": "Wardrobe",
     "InternalName": "Wardrobe",
-    "AssemblyVersion": "0.1.0.0",
+    "AssemblyVersion": "0.2.0.0",
     "Punchline": "One window for Penumbra mods and Glamourer looks.",
     "Description": "Shows what you are wearing and which Penumbra mods fit each slot. Hover to preview on your own character, click to pin, then apply through Penumbra and Glamourer. Also edits mod colours and emission, shows which mod wins each file, and lists your Glamourer designs.",
     "ApplicableVersion": "any",
@@ -19,7 +19,7 @@
     "DownloadLinkInstall": "https://github.com/Tacodille/Wardrobe/releases/latest/download/latest.zip",
     "DownloadLinkTesting": "https://github.com/Tacodille/Wardrobe/releases/latest/download/latest.zip",
     "DownloadLinkUpdate": "https://github.com/Tacodille/Wardrobe/releases/latest/download/latest.zip",
-    "LastUpdate": 1792407569,
+    "LastUpdate": 1792409372,
     "DownloadCount": 0
   }
 ]
